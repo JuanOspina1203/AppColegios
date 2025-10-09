@@ -1,2 +1,2 @@
-# AutomaticTaxPayment
-This is an application developed with React, Java and AWS Services to streamline the monthly tax payment process
+# AppColegios
+Apligacion de gestion e integracion general de procesos educativos en centros educativos desde grados pre-jardin hasta onceavo grado
