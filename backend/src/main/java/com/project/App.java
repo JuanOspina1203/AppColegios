@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.project.components.ResponseComponent;
 import com.project.service.BookService;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -14,9 +15,11 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(App.class);
     private final BookService service;
+    private final ResponseComponent responseComponent;
 
-    public App(BookService service) {
+    public App(BookService service, ResponseComponent responseComponent) {
         this.service = service;
+        this.responseComponent = responseComponent;
     }
 
     public App(){
@@ -40,26 +43,26 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             switch (method.toUpperCase()) {
                 case "POST":
                     if (event.getBody() == null)
-                        return this.service.buildResponse(400, Map.of("message", "Body is required"));
+                        return this.responseComponent.buildResponse(400, Map.of("message", "Body is required"));
                     return this.service.createBook(event.getBody());
                 case "GET":
                     return (id != null && !id.isEmpty()) ? this.service.readBook(id) : this.service.listBooks();
                 case "PUT":
                     if (id == null || id.isEmpty())
-                        return this.service.buildResponse(400, Map.of("message", "ID is required"));
+                        return this.responseComponent.buildResponse(400, Map.of("message", "ID is required"));
                     if (event.getBody() == null)
-                        return this.service.buildResponse(400, Map.of("message", "Body is required"));
+                        return this.responseComponent.buildResponse(400, Map.of("message", "Body is required"));
                     return this.service.updateBook(id, event.getBody());
                 case "DELETE":
                     if (id == null || id.isEmpty())
-                        return this.service.buildResponse(400, Map.of("message", "ID is required"));
+                        return this.responseComponent.buildResponse(400, Map.of("message", "ID is required"));
                     return this.service.deleteBook(id);
                 default:
-                    return this.service.buildResponse(405, Map.of("message", "Method not allowed"));
+                    return this.responseComponent.buildResponse(405, Map.of("message", "Method not allowed"));
             }
         } catch (Exception e) {
             logger.error("Error in request", e);
-            return this.service.buildResponse(500, Map.of("message", "Internal server error: " + e.getMessage()));
+            return this.responseComponent.buildResponse(500, Map.of("message", "Internal server error: " + e.getMessage()));
         }
     }
 }
