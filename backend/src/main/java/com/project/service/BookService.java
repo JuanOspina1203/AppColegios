@@ -20,7 +20,7 @@ public class BookService {
     }
 
     public BookService() {
-        this(new BookModel());
+        this(new BookModel(), new ResponseComponent());
     }
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -64,7 +64,6 @@ public class BookService {
 
     public APIGatewayProxyResponseEvent deleteBook(String id) {
         boolean deleted = this.model.deleteBook(id);
-
         return deleted
                 ? this.responseComponent.buildResponse(200, Map.of("message", "Book deleted successfully"))
                 : this.responseComponent.buildResponse(404, Map.of("message", "Book not found"));
@@ -78,10 +77,4 @@ public class BookService {
             return this.responseComponent.buildResponse(500, Map.of("message", "Error listing books"));
         }
     }
-
-    
-
-    
-
-    
 }
