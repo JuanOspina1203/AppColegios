@@ -1,6 +1,5 @@
 package com.backend;
 
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
@@ -12,38 +11,41 @@ import java.util.Map;
 import java.util.function.Function;
 
 @SpringBootApplication
-public class BackendApplication {
+public class BackendApplication{
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-	public static void main(String[] args) {
-		SpringApplication.run(BackendApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BackendApplication.class, args);
+    }
 
     @Bean
-    public Function<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> handleRequest() {
-        return event -> {
-            String httpMethod = event.getHttpMethod();
-            String path = event.getPath();
-            String body = event.getBody();
-            System.out.println("========== INICIO DE LA PETICIÓN ==========");
-            System.out.println("HTTP Method: " + httpMethod);
-            System.out.println("Path: " + path);
-            System.out.println("Body: " + body);
-            System.out.println("========== FIN DE LA PETICIÓN ==========");
-            Map<String, String> responseData = new HashMap<>();
-            responseData.put("message", "¡Lambda ejecutada exitosamente con Spring Boot!");
-            responseData.put("receivedMethod", httpMethod);
-            responseData.put("receivedPath", path);
-            responseData.put("hasBody", body != null ? "Sí" : "No");
+    Function<Map<String, Object>, APIGatewayProxyResponseEvent> handleMapRequest() {
+        return eventMap -> {
+            System.out.println("========== EVENT MAP RECIBIDO ==========");
+            System.out.println("Event Map: " + eventMap);
+            System.out.println("=========================================");
             try {
+                String httpMethod = (String) eventMap.get("httpMethod");
+                String path = (String) eventMap.get("path");
+                String body = (String) eventMap.get("body");
+                Map<String, String> queryParams = (Map<String, String>) eventMap.get("queryStringParameters");
+                Map<String, String> headers = (Map<String, String>) eventMap.get("headers");
+                System.out.println("HTTP Method: " + httpMethod);
+                System.out.println("Path: " + path);
+                System.out.println("Body: " + body);
+                System.out.println("Query params: " + queryParams);
+                System.out.println("Headers: " + headers);
+                Map<String, String> responseData = new HashMap<>();
+                responseData.put("message", "¡Lambda ejecutada exitosamente con Spring Boot!");
+                responseData.put("receivedMethod", httpMethod != null ? httpMethod : "null");
+                responseData.put("receivedPath", path != null ? path : "null");
+                responseData.put("hasBody", body != null ? "Sí, es este" + body : "No");
                 String responseBody = objectMapper.writeValueAsString(responseData);
                 APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
                 response.setStatusCode(200);
                 response.setBody(responseBody);
-                Map<String, String> responseHeaders = new HashMap<>();
-                responseHeaders.put("Content-Type", "application/json");
-                response.setHeaders(responseHeaders);
+                response.setHeaders(Map.of("Content-Type", "application/json"));
                 return response;
             } catch (Exception e) {
                 System.err.println("ERROR: " + e.getMessage());
@@ -54,4 +56,6 @@ public class BackendApplication {
             }
         };
     }
+
+
 }
