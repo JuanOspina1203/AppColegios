@@ -1,7 +1,6 @@
 package com.backend.repositories;
 
 import com.backend.entities.StudentEntity;
-import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 

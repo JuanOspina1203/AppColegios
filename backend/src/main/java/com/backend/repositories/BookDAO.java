@@ -1,9 +1,9 @@
 package com.backend.repositories;
 
 import com.backend.entities.BookEntity;
+import com.backend.entities.StudentEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -19,6 +19,8 @@ public class BookDAO {
     }
 
     public void saveBook(BookEntity book) {
+        if(book.getStudent() != null && book.getStudent().getStudentId() == null)
+            throw new IllegalArgumentException("The student associated to the book should be previously saved in the Database");
         String sql = """
                     INSERT INTO books_tbl (book_name, book_author, book_category, student_id)
                     VALUES (?,?,?,?)
@@ -33,15 +35,30 @@ public class BookDAO {
         );
     }
 
-    public Optional<BookEntity> findByStudentId(UUID studentId) {
+    public Optional<BookEntity> findByStudentIdWithStudent(UUID studentId) {
         String sql = """
-            SELECT b.* FROM books_tbl b
+            SELECT b.*, s.student_grade, s.student_identification_type, s.student_identification_number
+            FROM books_tbl b
+            LEFT JOIN students_tbl s ON b.student_id = s.student_id
             WHERE b.student_id = ?
         """;
-        return jdbcTemplate.query(
-                sql,
-                new Object[]{studentId},
-                rs -> rs.next() ? Optional.of(mapBook(rs)) : Optional.empty()
+        return jdbcTemplate.query(sql, new Object[]{studentId}, rs -> {
+                if(rs.next()) {
+                    BookEntity book = mapBook(rs);
+                    if(rs.getString("student_id") != null) {
+                        StudentEntity student = new StudentEntity(
+                                UUID.fromString(rs.getString("student_id")),
+                                rs.getString("student_grade"),
+                                rs.getString("student_identification_type"),
+                                rs.getString("student.identification_number"),
+                                book
+                        );
+                        book.setStudent(student);
+                    }
+                    return Optional.of(book);
+                }
+                return Optional.empty();
+            }
         );
     }
 
