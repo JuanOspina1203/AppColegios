@@ -9,24 +9,24 @@ import java.util.UUID;
 @Table(name = "students_tbl")
 public class StudentEntity {
 
+    public StudentEntity(){}
+
     public StudentEntity(
             UUID studentId,
             String studentGrade,
             String studentIdentificationType,
-            String studentIdentificationNumber,
-            BookEntity book
+            String studentIdentificationNumber
     ) {
         this.studentId = studentId;
         this.studentGrade = studentGrade;
         this.studentIdentificationType = studentIdentificationType;
         this.studentIdentificationNumber = studentIdentificationNumber;
-        this.book = book;
     }
 
-    @UuidGenerator
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "student_id")
     @Id
-    private final UUID studentId;
+    private UUID studentId;
 
     @Column(name = "student_grade")
     private String studentGrade;
@@ -35,7 +35,7 @@ public class StudentEntity {
     private String studentIdentificationType;
 
     @Column(name = "student_identification_number")
-    private final String studentIdentificationNumber;
+    private String studentIdentificationNumber;
 
     @OneToOne(mappedBy = "student")
     private BookEntity book;
@@ -44,31 +44,17 @@ public class StudentEntity {
         return this.studentId;
     }
 
-    public String getStudentGrade() {
-        return this.studentGrade;
-    }
+    public String getStudentGrade() { return this.studentGrade; }
 
-    public String getStudentIdentificationType() {
-        return this.studentIdentificationType;
-    }
+    public void setStudentGrade(String studentGrade) { this.studentGrade = studentGrade; }
 
-    public String getStudentIdentificationNumber() {
-        return this.studentIdentificationNumber;
-    }
+    public String getStudentIdentificationType() { return this.studentIdentificationType; }
 
-    public void setStudentGrade(String studentGrade) {
-        this.studentGrade = studentGrade;
-    }
+    public void setStudentIdentificationType(String studentIdentificationType) { this.studentIdentificationType = studentIdentificationType; }
 
-    public void setStudentIdentificationType(String studentIdentificationType) {
-        this.studentIdentificationType = studentIdentificationType;
-    }
+    public String getStudentIdentificationNumber() { return this.studentIdentificationNumber; }
 
-    public BookEntity getBook() {
-        return this.book;
-    }
+    public BookEntity getBook() { return this.book; }
 
-    public void setBook(BookEntity book) {
-        this.book = book;
-    }
+    public void setBook(BookEntity book) { this.book = book; }
 }
