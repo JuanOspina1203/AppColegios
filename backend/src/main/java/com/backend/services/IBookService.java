@@ -8,9 +8,9 @@ import java.util.UUID;
 
 public interface IBookService {
     void assignOrUnassignedToStudent(UUID studentId, Integer bookId, boolean assign) throws Exception;
-    void saveBook(BookEntity book);
+    void saveBook(BookEntity book) throws Exception;
     BookEntity findBook(Integer bookId);
     List<BookEntity> getAllBooks();
-    void updateBook(BookEntity book);
+    void updateBook(BookEntity book) throws Exception;
     void deleteBook(Integer bookId);
 }

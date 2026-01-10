@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IStudentService {
-    void saveStudent(StudentEntity Student);
-    StudentEntity findStudent(UUID StudentId);
+    void saveStudent(StudentEntity student);
+    StudentEntity findStudent(UUID studentId);
     List<StudentEntity> getAllStudents();
     List<StudentEntity> getAllStudentsWithBook();
     void updateStudent(StudentEntity student);
-    void deleteStudent(UUID StudentId);
+    void deleteStudent(UUID studentId);
 }

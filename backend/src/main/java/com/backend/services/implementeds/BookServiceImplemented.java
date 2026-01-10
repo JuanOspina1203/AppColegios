@@ -8,6 +8,7 @@ import com.backend.services.IBookService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,7 +21,6 @@ public class BookServiceImplemented implements IBookService {
         this.repository = repository;
         this.studentRepository = studentRepository;
     }
-
 
     @Override
     public void assignOrUnassignedToStudent(UUID studentId, Integer bookId, boolean assign) throws Exception {
@@ -44,27 +44,28 @@ public class BookServiceImplemented implements IBookService {
     }
 
     @Override
-    public void saveBook(BookEntity book) {
-
+    public void saveBook(BookEntity book) throws Exception {
+        this.repository.save(book);
     }
 
     @Override
     public BookEntity findBook(Integer bookId) {
-        return null;
+        return Optional.of(this.repository.findById(bookId)).get().orElseThrow();
     }
 
     @Override
     public List<BookEntity> getAllBooks() {
-        return List.of();
+        return this.repository.findAll();
     }
 
     @Override
-    public void updateBook(BookEntity book) {
-
+    public void updateBook(BookEntity book) throws Exception {
+        this.repository.findById(book.getBookId()).orElseThrow();
+        this.repository.save(book);
     }
 
     @Override
     public void deleteBook(Integer bookId) {
-
+        this.repository.deleteById(bookId);
     }
 }
