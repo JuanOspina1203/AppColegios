@@ -1,6 +1,6 @@
 package com.backend.repositories;
 
-import com.backend.entities.StudentEntity;
+import com.backend.model.entities.StudentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

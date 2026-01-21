@@ -1,7 +1,10 @@
 package com.backend.services.implementeds;
 
-import com.backend.entities.BookEntity;
-import com.backend.entities.StudentEntity;
+import com.backend.model.Mapper;
+import com.backend.model.dtos.BookDto;
+import com.backend.model.dtos.StudentDto;
+import com.backend.model.entities.BookEntity;
+import com.backend.model.entities.StudentEntity;
 import com.backend.repositories.IBookRepository;
 import com.backend.repositories.IStudentRepository;
 import com.backend.services.IBookService;
@@ -16,27 +19,31 @@ public class BookServiceImplemented implements IBookService {
 
     private final IBookRepository repository;
     private final IStudentRepository studentRepository;
+    private final Mapper mapper;
 
-    public BookServiceImplemented(IBookRepository repository, IStudentRepository studentRepository) {
+    public BookServiceImplemented(IBookRepository repository, IStudentRepository studentRepository, Mapper mapper) {
         this.repository = repository;
         this.studentRepository = studentRepository;
+        this.mapper = mapper;
     }
 
     @Override
     public void assignOrUnassignedToStudent(UUID studentId, Integer bookId, boolean assign) throws Exception {
-        StudentEntity student = this.studentRepository.findById(studentId).orElseThrow(() -> new Exception("Student not found with id: " + studentId));
-        BookEntity book = this.repository.findById(bookId).orElseThrow(() -> new Exception("Book not found"));
+        StudentEntity student = this.studentRepository.findById(studentId).orElseThrow();
+        StudentDto studentDto = this.mapper.convertStudentEntityToStudentDto(student);
+        BookEntity book = this.repository.findById(bookId).orElseThrow();
+        BookDto bookDto = this.mapper.convertBookEntityToBookDto(book);
         if(assign) {
-            if (student.getBook() != null)
+            if (studentDto.getBookId() != null)
                 throw new Exception("The student already has a book: " + student.getBook().getBookName() + ", he has to release it first");
-            if (book.getStudent() != null)
-                throw new Exception("Book already assigned: " + book.getStudent().getStudentId() + ", it has to release it first");
+            if (bookDto.getStudentId() != null)
+                throw new Exception("Book already assigned: " + bookDto.getStudentId() + ", it has to release it first");
             book.setStudent(student);
             student.setBook(book);
         } else {
-            if (student.getBook() == null)
+            if (studentDto.getBookId() == null)
                 throw new Exception("The student does not have a book");
-            if (book.getStudent() == null)
+            if (bookDto.getStudentId() == null)
                 throw new Exception("Book is not assigned");
             book.setStudent(null);
             student.setBook(null);
@@ -44,24 +51,26 @@ public class BookServiceImplemented implements IBookService {
     }
 
     @Override
-    public void saveBook(BookEntity book) throws Exception {
-        this.repository.save(book);
+    public void saveBook(BookDto book) throws Exception {
+        BookEntity bookEntity = this.mapper.convertBookDtoToBookEntity(book);
+        this.repository.save(bookEntity);
     }
 
     @Override
-    public BookEntity findBook(Integer bookId) {
-        return Optional.of(this.repository.findById(bookId)).get().orElseThrow();
+    public BookDto findBook(Integer bookId) {
+        return this.mapper.convertBookEntityToBookDto(this.repository.findById(bookId).isPresent() ? this.repository.findById(bookId).get() : null);
     }
 
     @Override
-    public List<BookEntity> getAllBooks() {
-        return this.repository.findAll();
+    public List<BookDto> getAllBooks() {
+        return this.repository.findAll().stream().map(this.mapper::convertBookEntityToBookDto).toList();
     }
 
     @Override
-    public void updateBook(BookEntity book) throws Exception {
-        this.repository.findById(book.getBookId()).orElseThrow();
-        this.repository.save(book);
+    public void updateBook(BookDto book) throws Exception {
+        BookEntity bookEntity = this.mapper.convertBookDtoToBookEntity(this.repository.findById(book.getBookId()).isPresent() ? this.repository.findById(book.getBookId()).get() : null);
+
+        this.repository.save(bookEntity);
     }
 
     @Override

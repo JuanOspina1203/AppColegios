@@ -1,6 +1,7 @@
 package com.backend.services;
 
-import com.backend.entities.StudentEntity;
+
+import com.backend.model.entities.StudentEntity;
 
 import java.util.List;
 import java.util.UUID;

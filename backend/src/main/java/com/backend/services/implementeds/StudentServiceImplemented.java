@@ -1,6 +1,6 @@
 package com.backend.services.implementeds;
 
-import com.backend.entities.StudentEntity;
+import com.backend.model.entities.StudentEntity;
 import com.backend.repositories.IStudentRepository;
 import com.backend.services.IStudentService;
 import org.springframework.stereotype.Service;

@@ -1,11 +1,15 @@
-package com.backend.entities;
+package com.backend.model.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
 @Entity
 @Table(name = "books_tbl")
+@Getter
+@Setter
 public class BookEntity {
 
     public BookEntity (){}
@@ -39,26 +43,6 @@ public class BookEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", unique = true)
     private StudentEntity student;
-
-    public Integer getBookId() { return this.bookId; }
-
-    public String getBookName() { return this.bookName; }
-
-    public String getBookAuthor() { return this.bookAuthor; }
-
-    public String getBookCategory() { return this.bookCategory; }
-
-    public StudentEntity getStudent() { return this.student; }
-
-    public void setBookId(Integer bookId) { this.bookId = bookId; }
-
-    public void setBookName(String bookName) { this.bookName = bookName; }
-
-    public void setBookCategory(String bookCategory) { this.bookCategory = bookCategory; }
-
-    public void setBookAuthor(String bookAuthor) { this.bookAuthor = bookAuthor; }
-
-    public void setStudent(StudentEntity student) { this.student = student; }
 
     public void assignToStudent(StudentEntity student) {
         if(this.student != null)
