@@ -1,14 +1,10 @@
 package com.backend.model.dtos;
 
-import lombok.*;
 
-import java.util.UUID;
+import lombok.NonNull;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class BookDto {
+
     @NonNull
     private Integer bookId;
     @NonNull
@@ -18,5 +14,31 @@ public class BookDto {
     @NonNull
     private String bookCategory;
     private String studentName;
-    private UUID studentId;
+    private String studentIdentificationNumber;
+
+    public BookDto() {}
+
+    public Integer getBookId() {return this.bookId;}
+
+    public String getBookName() {return this.bookName;}
+
+    public String getBookAuthor() {return this.bookAuthor;}
+
+    public String getBookCategory() {return this.bookCategory;}
+
+    public String getStudentName() {return this.studentName;}
+
+    public String getStudentIdentificationNumber() {return this.studentIdentificationNumber;}
+
+    public void setBookId(Integer bookId) {this.bookId = bookId;}
+
+    public void setBookName(String bookName) {this.bookName = bookName;}
+
+    public void setBookAuthor(String bookAuthor) {this.bookAuthor = bookAuthor;}
+
+    public void setBookCategory(String bookCategory) {this.bookCategory = bookCategory;}
+
+    public void setStudentName(String studentName) {this.studentName = studentName;}
+
+    public void setStudentIdentificationNumber(String studentIdentificationNumber) {this.studentIdentificationNumber = studentIdentificationNumber;}
 }

@@ -1,11 +1,22 @@
 package com.backend.model;
 
 import com.backend.model.dtos.BookDto;
+import com.backend.model.dtos.GradeGroupDto;
 import com.backend.model.dtos.StudentDto;
+import com.backend.model.dtos.TeacherDto;
 import com.backend.model.entities.BookEntity;
+import com.backend.model.entities.GradeGroupEntity;
 import com.backend.model.entities.StudentEntity;
+import com.backend.model.entities.TeacherEntity;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
 public class Mapper {
+
+    //STUDENT
 
     public StudentEntity convertStudentDtoToStudentEntity(StudentDto studentDto) {
         if(studentDto == null) return null;
@@ -20,7 +31,7 @@ public class Mapper {
     public StudentDto convertStudentEntityToStudentDto(StudentEntity studentEntity) {
         if(studentEntity == null) return null;
         StudentDto studentDto = new StudentDto();
-        studentDto.setStudentId(studentEntity.getStudentId());
+        studentDto.setStudentName(studentEntity.getStudentName());
         studentDto.setStudentGrade(studentEntity.getStudentGrade());
         studentDto.setStudentIdentificationType(studentEntity.getStudentIdentificationType());
         studentDto.setStudentIdentificationNumber(studentEntity.getStudentIdentificationNumber());
@@ -29,8 +40,12 @@ public class Mapper {
             studentDto.setBookName(book.getBookName());
             studentDto.setBookId(book.getBookId());
         }
+        GradeGroupEntity gradeGroupEntity = studentEntity.getStudentGradeAssigned();
+        if(gradeGroupEntity != null) studentDto.setStudentGradeGroupAssigned(gradeGroupEntity.getGradeGroupGradeLevel() + gradeGroupEntity.getGradeGroupLetter());
         return studentDto;
     }
+
+    //BOOK
 
     public BookEntity convertBookDtoToBookEntity(BookDto bookDto) {
         if(bookDto == null) return null;
@@ -44,13 +59,79 @@ public class Mapper {
         if(bookEntity == null) return null;
         BookDto bookDto = new BookDto();
         bookDto.setBookId(bookEntity.getBookId());
+        bookDto.setBookName(bookEntity.getBookName());
         bookDto.setBookCategory(bookEntity.getBookCategory());
         bookDto.setBookAuthor(bookEntity.getBookAuthor());
         StudentEntity studentEntity = bookEntity.getStudent();
         if(studentEntity != null) {
             bookDto.setStudentName(studentEntity.getStudentName());
-            bookDto.setStudentId(studentEntity.getStudentId());
+            bookDto.setStudentIdentificationNumber(studentEntity.getStudentIdentificationNumber());
         }
         return bookDto;
+    }
+
+    //TEACHER
+
+    public TeacherEntity convertTeacherDtoToTeacherEntity(TeacherDto teacherDto) {
+        if(teacherDto ==  null) return null;
+        TeacherEntity teacherEntity = new TeacherEntity();
+        teacherEntity.setTeacherIdentificationNumber(teacherDto.getTeacherIdentificationNumber());
+        teacherEntity.setTeacherIdentificationType(teacherDto.getTeacherIdentificationType());
+        teacherEntity.setTeacherEmail(teacherDto.getTeacherEmail());
+        teacherEntity.setTeacherName(teacherDto.getTeacherName());
+        teacherEntity.setTeacherPhone(teacherDto.getTeacherPhone());
+        teacherEntity.setTeacherSubject(teacherDto.getTeacherSubject());
+        return teacherEntity;
+    }
+
+    public TeacherDto convertTeacherEntityToTeacherDto(TeacherEntity teacherEntity) {
+        if(teacherEntity == null) return null;
+        TeacherDto teacherDto = new TeacherDto();
+        teacherDto.setTeacherIdentificationNumber(teacherEntity.getTeacherIdentificationNumber());
+        teacherDto.setTeacherIdentificationType(teacherEntity.getTeacherIdentificationType());
+        teacherDto.setTeacherEmail(teacherEntity.getTeacherEmail());
+        teacherDto.setTeacherPhone(teacherEntity.getTeacherPhone());
+        teacherDto.setTeacherName(teacherEntity.getTeacherName());
+        teacherDto.setTeacherSubject(teacherEntity.getTeacherSubject());
+        List<GradeGroupEntity> assignedGroups = teacherEntity.getTeacherAssignedGroups();
+        if(assignedGroups != null) {
+            List<String> groupCodes = assignedGroups
+                    .stream()
+                    .map(GradeGroupEntity::getGradeGroupId)
+                    .toList();
+            teacherDto.setTeacherAssignedGroups(groupCodes);
+        } else {
+            teacherDto.setTeacherAssignedGroups(new ArrayList<>());
+        }
+        return teacherDto;
+    }
+
+    //GRADE GROUPS
+
+    public GradeGroupEntity convertGradeGroupDtoToGradeGroupEntity(GradeGroupDto gradeGroupDto) {
+        if(gradeGroupDto == null) return null;
+        return new GradeGroupEntity(
+                gradeGroupDto.getGradeGroupShift(),
+                gradeGroupDto.getGradeGroupGradeLevel(),
+                gradeGroupDto.getGradeGroupLetter(),
+                gradeGroupDto.getGradeGroupCampus(),
+                gradeGroupDto.getGradeGroupFloorNumber()
+        );
+    }
+
+    public GradeGroupDto convertGradeGroupEntityToGradeGroupDto(GradeGroupEntity gradeGroupEntity) {
+        if(gradeGroupEntity == null) return null;
+        GradeGroupDto gradeGroupDto = new GradeGroupDto();
+        gradeGroupDto.setGradeGroupId(gradeGroupEntity.getGradeGroupId());
+        gradeGroupDto.setGradeGroupFloorNumber(gradeGroupEntity.getGradeGroupFloorNumber());
+        gradeGroupDto.setGradeGroupCampus(gradeGroupEntity.getGradeGroupCampus());
+        gradeGroupDto.setGradeGroupLetter(gradeGroupEntity.getGradeGroupLetter());
+        gradeGroupDto.setGradeGroupShift(gradeGroupEntity.getGradeGroupShift());
+        gradeGroupDto.setGradeGroupGradeLevel(gradeGroupEntity.getGradeGroupGradeLevel());
+        if(gradeGroupEntity.getGradeGroupTeacherInCharge() != null) {
+            gradeGroupDto.setGradeGroupTeacherInChargeName(gradeGroupEntity.getGradeGroupTeacherInCharge().getTeacherName());
+            gradeGroupDto.setGradeGroupTeacherInChargeIdentificationNumber(gradeGroupEntity.getGradeGroupTeacherInCharge().getTeacherIdentificationNumber());
+        }
+        return gradeGroupDto;
     }
 }

@@ -1,14 +1,19 @@
 package com.backend.model.dtos;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.UUID;
-
-@Getter
-@Setter
 public class AssignBookDto {
-    private UUID studentId;
+    private String studentIdentificationNumber;
     private Integer bookId;
-    private boolean isAssign;
+    private Boolean isAssign;
+
+    public String getStudentIdentificationNumber() {return this.studentIdentificationNumber;}
+
+    public void setStudentIdentificationNumber(String studentIdentificationNumber) {this.studentIdentificationNumber = studentIdentificationNumber;}
+
+    public Integer getBookId() {return this.bookId;}
+
+    public void setBookId(Integer bookId) {this.bookId = bookId;}
+
+    public Boolean getIsAssign() {return this.isAssign;}
+
+    public void setAssign(Boolean assign) {this.isAssign = assign;}
 }

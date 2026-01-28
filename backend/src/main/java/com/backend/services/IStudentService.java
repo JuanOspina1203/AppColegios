@@ -1,16 +1,15 @@
 package com.backend.services;
 
-
-import com.backend.model.entities.StudentEntity;
+import com.backend.model.dtos.StudentDto;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface IStudentService {
-    void saveStudent(StudentEntity student);
-    StudentEntity findStudent(UUID studentId);
-    List<StudentEntity> getAllStudents();
-    List<StudentEntity> getAllStudentsWithBook();
-    void updateStudent(StudentEntity student);
-    void deleteStudent(UUID studentId);
+    void saveStudent(StudentDto student);
+    StudentDto findStudent(String studentIdentificationNumber);
+    List<StudentDto> getAllStudents();
+    List<StudentDto> getAllStudentsWithBook();
+    void updateStudent(StudentDto student) throws Exception;
+    void deleteStudent(String studentIdentificationNumber);
+    void enrollStudentInGradeGroup(String studentIdentificationNumber, String gradeGroupId);
 }

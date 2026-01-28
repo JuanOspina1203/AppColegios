@@ -1,15 +1,9 @@
 package com.backend.model.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-@Data
 @Entity
 @Table(name = "books_tbl")
-@Getter
-@Setter
 public class BookEntity {
 
     public BookEntity (){}
@@ -41,8 +35,20 @@ public class BookEntity {
     private String bookCategory;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", unique = true)
+    @JoinColumn(name = "student_identification_number", unique = true)
     private StudentEntity student;
+
+    public Integer getBookId() {return bookId;}
+
+    public String getBookName() {return bookName;}
+
+    public String getBookAuthor() {return bookAuthor;}
+
+    public String getBookCategory() {return bookCategory;}
+
+    public StudentEntity getStudent() {return student;}
+
+    public void setStudent(StudentEntity student) {this.assignToStudent(student);}
 
     public void assignToStudent(StudentEntity student) {
         if(this.student != null)
