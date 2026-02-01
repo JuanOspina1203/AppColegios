@@ -9,7 +9,7 @@ public interface IStudentService {
     StudentDto findStudent(String studentIdentificationNumber);
     List<StudentDto> getAllStudents();
     List<StudentDto> getAllStudentsWithBook();
-    void updateStudent(StudentDto student) throws Exception;
+    void updateStudent(StudentDto student);
     void deleteStudent(String studentIdentificationNumber);
     void enrollStudentInGradeGroup(String studentIdentificationNumber, String gradeGroupId);
 }

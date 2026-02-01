@@ -9,6 +9,6 @@ public interface ITeacherService {
     TeacherDto findTeacher(String teacherIdentificationNumber);
     List<TeacherDto> findAll();
     List<String> findAllGradeGroupsAssignedByATeacher(String teacherIdentificationNumber);
-    void updateTeacher(TeacherDto teacherDto) throws Exception;
+    void updateTeacher(TeacherDto teacherDto);
     void deleteTeacher(String teacherIdentificationNumber);
 }

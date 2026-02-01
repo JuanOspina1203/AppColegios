@@ -11,7 +11,7 @@ public class Routes {
     public static final String GRADE_GROUP_ID = "/{gradeGroupId}";
     public static final String GRADE_GROUP_ALL_GROUPS_BY_SHIFT = "/all-grades-group-by-shift/{gradeGroupShift}";
     public static final String GRADE_GROUP_ALL_GROUPS_BY_CAMPUS = "/all-grades-group-by-campus/{gradeGroupCampus}";
-    public static final String GRADE_GROUP_COUNT_OF_STUDENTS = "/count-of-students/{gradeGroupId}";
+    public static final String GRADE_GROUP_COUNT_OF_STUDENTS = "/count-of-students";
     public static final String GRADE_GROUP_ASSIGN_TEACHER = "/assign-teacher";
     public static final String TEACHERS_ROUTE = "/teacher";
     public static final String TEACHER_IDENTIFICATION_NUMBER = "/{teacherIdentificationNumber}";
@@ -21,4 +21,9 @@ public class Routes {
     public static final String DATABASE_EXPORT = "/export";
     public static final String DATABASE_IMPORT = "/import";
     public static final String DATABASE_FILE = "/{filename}";
+    public static final String AUTH_ROUTE = "/auth";
+    public static final String AUTH_LOGIN = "/login";
+    public static final String AUTH_REGISTER = "/register";
+    public static final String AUTH_TEACHERS_IN_CHARGE_OF_A_DIRECTOR = "/teachers";
+    public static final String AUTH_FIND_DIRECTOR = "/{directorUsername}";
 }

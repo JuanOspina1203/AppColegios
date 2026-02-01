@@ -1,5 +1,6 @@
 package com.backend.model.entities;
 
+import com.backend.model.Role;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class TeacherEntity {
     @Column(name = "teacher_name")
     private String teacherName;
 
-    @Column(name = "teacher_email")
+    @Column(name = "teacher_email", unique = true)
     private String teacherEmail;
 
     @Column(name = "teacher_phone")
@@ -28,8 +29,15 @@ public class TeacherEntity {
     @Column(name = "teacher_subject")
     private String teacherSubject;
 
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.TEACHER;
+
     @OneToMany(mappedBy = "gradeGroupTeacherInCharge", fetch = FetchType.LAZY)
     private List<GradeGroupEntity> teacherAssignedGroups;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "director_identification_number")
+    private DirectorEntity teacherManagedByDirector;
 
     public TeacherEntity() {}
 
@@ -60,4 +68,10 @@ public class TeacherEntity {
     public List<GradeGroupEntity> getTeacherAssignedGroups() {return this.teacherAssignedGroups;}
 
     public void setTeacherAssignedGroups(List<GradeGroupEntity> teacherAssignedGroups) {this.teacherAssignedGroups = teacherAssignedGroups;}
+
+    public DirectorEntity getTeacherManagedByDirector() {return this.teacherManagedByDirector;}
+
+    public void setTeacherManagedByDirector(DirectorEntity teacherManagedByDirector) {this.teacherManagedByDirector = teacherManagedByDirector;}
+
+    public Role getRole() {return this.role;}
 }

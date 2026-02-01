@@ -4,6 +4,7 @@ import com.backend.model.dtos.TeacherDto;
 import com.backend.routes.Routes;
 import com.backend.services.ITeacherService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ public class TeacherController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('DIRECTOR')")
     public ResponseEntity<String> saveTeacher(@Validated @RequestBody TeacherDto teacherDto) {
         this.service.saveTeacher(teacherDto);
         return ResponseEntity.ok("Teacher saved");
@@ -41,12 +43,14 @@ public class TeacherController {
     }
 
     @PutMapping
-    public ResponseEntity<String> updateTeacher(@Validated @RequestBody TeacherDto teacherDto) throws Exception {
+    @PreAuthorize("hasRole('DIRECTOR')")
+    public ResponseEntity<String> updateTeacher(@Validated @RequestBody TeacherDto teacherDto) {
         this.service.updateTeacher(teacherDto);
         return ResponseEntity.ok("Teacher updated");
     }
 
     @DeleteMapping(Routes.TEACHER_IDENTIFICATION_NUMBER)
+    @PreAuthorize("hasRole('DIRECTOR')")
     public ResponseEntity<String> deleteTeacher(@PathVariable String teacherIdentificationNumber) {
         this.service.deleteTeacher(teacherIdentificationNumber);
         return ResponseEntity.ok("Teacher deleted");

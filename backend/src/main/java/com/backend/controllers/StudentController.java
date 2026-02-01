@@ -6,6 +6,7 @@ import com.backend.routes.Routes;
 import com.backend.services.IStudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ public class StudentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('DIRECTOR')")
     public ResponseEntity<String> saveStudent(@Validated @RequestBody StudentDto student) {
         this.service.saveStudent(student);
         return ResponseEntity.ok("Student saved");
@@ -43,18 +45,21 @@ public class StudentController {
     }
 
     @PutMapping
-    public ResponseEntity<String> updateStudent(@Validated @RequestBody StudentDto student) throws Exception {
+    @PreAuthorize("hasRole('DIRECTOR')")
+    public ResponseEntity<String> updateStudent(@Validated @RequestBody StudentDto student) {
         this.service.updateStudent(student);
         return ResponseEntity.ok("Student updated");
     }
 
     @DeleteMapping(Routes.STUDENT_ID)
+    @PreAuthorize("hasRole('DIRECTOR')")
     public ResponseEntity<String> deleteStudent(@PathVariable String studentIdentificationNumber) {
         this.service.deleteStudent(studentIdentificationNumber);
         return ResponseEntity.ok("Student deleted");
     }
 
     @PostMapping(Routes.ENROLL_STUDENT_IN_GRADE_GROUP)
+    @PreAuthorize("hasRole('DIRECTOR')")
     public ResponseEntity<String> enrollStudentInGradeGroup(@Validated @RequestBody PutStudentInGradeGroupDto putStudentInGradeGroupDto) {
         this.service.enrollStudentInGradeGroup(putStudentInGradeGroupDto.getStudentIdentificationNumber(), putStudentInGradeGroupDto.getGradeGroupId());
         return ResponseEntity.ok("Student enrolled");

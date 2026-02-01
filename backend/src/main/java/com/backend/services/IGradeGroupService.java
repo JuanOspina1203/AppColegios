@@ -13,6 +13,6 @@ public interface IGradeGroupService {
     List<GradeGroupDto> findAllGradesGroupsByCampus(String gradeGroupCampus);
     Integer getCountOfStudentsInGradeGroup(String gradeGroupId);
     void assignTeacher(String teacherIdentificationNumber, String gradeGroupId);
-    void updateGradeGroup(GradeGroupDto gradeGroupDto) throws Exception;
+    void updateGradeGroup(GradeGroupDto gradeGroupDto);
     void deleteGradeGroup(String gradeGroupId);
 }

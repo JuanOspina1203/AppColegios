@@ -34,7 +34,7 @@ public class TeacherServiceImplemented implements ITeacherService {
 
     @Override
     public TeacherDto findTeacher(String teacherIdentificationNumber) {
-        return this.mapper.convertTeacherEntityToTeacherDto(this.repository.findById(teacherIdentificationNumber).orElseThrow());
+        return this.mapper.convertTeacherEntityToTeacherDto(this.repository.findById(teacherIdentificationNumber).orElseThrow(() -> new RuntimeException("Teacher not found")));
     }
 
     @Override
@@ -56,26 +56,26 @@ public class TeacherServiceImplemented implements ITeacherService {
     }
 
     @Override
-    public void updateTeacher(TeacherDto teacherDto) throws Exception {
-        if(this.repository.findById(teacherDto.getTeacherIdentificationNumber()).isPresent())
-            this.repository.save(this.mapper.convertTeacherDtoToTeacherEntity(teacherDto));
-        else throw new Exception("Teacher not found");
+    public void updateTeacher(TeacherDto teacherDto) {
+        this.repository.findById(teacherDto.getTeacherIdentificationNumber()).orElseThrow(() -> new RuntimeException("Teacher not found"));
+        this.repository.save(this.mapper.convertTeacherDtoToTeacherEntity(teacherDto));
     }
 
     @Override
     public void deleteTeacher(String teacherIdentificationNumber) {
-        Optional<TeacherEntity> teacherEntity = this.repository.findById(teacherIdentificationNumber);
-        if(teacherEntity.isPresent()) {
-            List<GradeGroupEntity> gradeGroupEntities = this.gradeGroupRepository.findAll()
-                    .stream()
-                    .filter(gradeGroupEntity -> gradeGroupEntity.getGradeGroupTeacherInCharge().getTeacherIdentificationNumber().equals(teacherIdentificationNumber))
-                    .toList();
-            if(!gradeGroupEntities.isEmpty()) {
-                for (GradeGroupEntity gradeGroupEntity : gradeGroupEntities)
-                    gradeGroupEntity.setGradeGroupTeacherInCharge(null);
-                this.repository.deleteById(teacherIdentificationNumber);
-            }
+        this.repository.findById(teacherIdentificationNumber).orElseThrow(() -> new RuntimeException("Teacher not found"));
+        List<GradeGroupEntity> gradeGroupEntities = this.gradeGroupRepository.findAll()
+                .stream()
+                .filter(gradeGroupEntity -> gradeGroupEntity.
+                        getGradeGroupTeacherInCharge().
+                        getTeacherIdentificationNumber().
+                        equals(teacherIdentificationNumber))
+                .toList();
+        if(!gradeGroupEntities.isEmpty()) {
+            for (GradeGroupEntity gradeGroupEntity : gradeGroupEntities)
+                gradeGroupEntity.setGradeGroupTeacherInCharge(null);
             this.repository.deleteById(teacherIdentificationNumber);
         }
+        this.repository.deleteById(teacherIdentificationNumber);
     }
 }

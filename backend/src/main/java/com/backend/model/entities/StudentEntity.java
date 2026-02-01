@@ -1,5 +1,6 @@
 package com.backend.model.entities;
 
+import com.backend.model.Role;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,6 +19,9 @@ public class StudentEntity {
 
     @Column(name = "student_identification_type")
     private String studentIdentificationType;
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.STUDENT;
 
     @OneToOne(mappedBy = "student")
     private BookEntity book;

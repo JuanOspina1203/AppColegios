@@ -1,13 +1,8 @@
 package com.backend.model;
 
-import com.backend.model.dtos.BookDto;
-import com.backend.model.dtos.GradeGroupDto;
-import com.backend.model.dtos.StudentDto;
-import com.backend.model.dtos.TeacherDto;
-import com.backend.model.entities.BookEntity;
-import com.backend.model.entities.GradeGroupEntity;
-import com.backend.model.entities.StudentEntity;
-import com.backend.model.entities.TeacherEntity;
+import com.backend.model.dtos.*;
+import com.backend.model.entities.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,6 +10,12 @@ import java.util.List;
 
 @Component
 public class Mapper {
+
+    private final PasswordEncoder passwordEncoder;
+
+    public Mapper(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     //STUDENT
 
@@ -133,5 +134,33 @@ public class Mapper {
             gradeGroupDto.setGradeGroupTeacherInChargeIdentificationNumber(gradeGroupEntity.getGradeGroupTeacherInCharge().getTeacherIdentificationNumber());
         }
         return gradeGroupDto;
+    }
+
+    //DIRECTOR
+
+    public DirectorEntity convertDirectorDtoToDirectorEntity(DirectorDto directorDto) {
+        if(directorDto == null) return null;
+        String passwordEncoded = this.passwordEncoder.encode(directorDto.getDirectorPassword());
+        return new DirectorEntity(
+                directorDto.getDirectorIdentificationNumber(),
+                directorDto.getDirectorName(),
+                directorDto.getDirectorEmail(),
+                directorDto.getDirectorIdentificationType(),
+                directorDto.getDirectorUsername(),
+                passwordEncoded,
+                directorDto.getRole()
+        );
+    }
+
+    public DirectorDto convertDirectorEntityToDirectorDto(DirectorEntity directorEntity) {
+        if(directorEntity == null) return null;
+        return new DirectorDto(
+                directorEntity.getDirectorIdentificationNumber(),
+                directorEntity.getDirectorIdentificationType(),
+                directorEntity.getDirectorName(),
+                directorEntity.getDirectorEmail(),
+                directorEntity.getDirectorUsername(),
+                null
+        );
     }
 }

@@ -39,7 +39,7 @@ public class StudentServiceImplemented implements IStudentService {
 
     @Override
     public StudentDto findStudent(String studentIdentificationNumber) {
-        return this.mapper.convertStudentEntityToStudentDto(this.repository.findById(studentIdentificationNumber).orElseThrow());
+        return this.mapper.convertStudentEntityToStudentDto(this.repository.findById(studentIdentificationNumber).orElseThrow(() -> new RuntimeException("Student not found")));
     }
 
     @Override
@@ -59,37 +59,29 @@ public class StudentServiceImplemented implements IStudentService {
     }
 
     @Override
-    public void updateStudent(StudentDto student) throws Exception {
-        Optional<StudentEntity> studentEntity = this.repository.findById(student.getStudentIdentificationNumber());
-        if(studentEntity.isPresent()) {
-            StudentEntity studentToSave = this.mapper.convertStudentDtoToStudentEntity(student);
-            if(studentEntity.get().getBook() == null) this.repository.save(studentToSave);
-            studentToSave.setBook(studentEntity.get().getBook());
-            this.repository.save(studentToSave);
-        }
-        else throw new Exception("Student not found");
+    public void updateStudent(StudentDto student) {
+        StudentEntity studentEntity = this.repository.findById(student.getStudentIdentificationNumber()).orElseThrow(() -> new RuntimeException("Student not found"));
+        StudentEntity studentToSave = this.mapper.convertStudentDtoToStudentEntity(student);
+        if(studentEntity.getBook() == null) this.repository.save(studentToSave);
+        studentToSave.setBook(studentEntity.getBook());
+        this.repository.save(studentToSave);
     }
 
     @Override
     public void deleteStudent(String studentIdentificationNumber) {
-       Optional<StudentEntity> studentEntity = this.repository.findById(studentIdentificationNumber);
-        if(studentEntity.isPresent()) {
-            GradeGroupEntity gradeGroupEntity = this.gradeGroupRepository.findById(studentEntity.get().getStudentGradeAssigned().getGradeGroupId()).orElse(null);
-            BookEntity bookEntity = this.bookRepository.findById(studentEntity.get().getBook().getBookId()).orElse(null);
-            assert bookEntity != null;
-            assert gradeGroupEntity != null;
-            bookEntity.setStudent(null);
-
-            this.bookRepository.save(bookEntity);
-            this.repository.deleteById(studentIdentificationNumber);
-        }
-        this.repository.deleteById(studentIdentificationNumber);
+       StudentEntity studentEntity = this.repository.findById(studentIdentificationNumber).orElseThrow(() -> new RuntimeException("Student not found"));
+       BookEntity bookEntity = studentEntity.getBook() != null ? this.bookRepository.findById(studentEntity.getBook().getBookId()).orElse(null) : null ;
+       if(bookEntity != null) {
+           bookEntity.setStudent(null);
+           this.bookRepository.save(bookEntity);
+       }
+       this.repository.deleteById(studentIdentificationNumber);
     }
 
     @Override
     public void enrollStudentInGradeGroup(String studentIdentificationNumber, String gradeGroupId) {
-        GradeGroupEntity gradeGroupEntity = this.gradeGroupRepository.findById(gradeGroupId).orElseThrow();
-        StudentEntity studentEntity = this.repository.findById(studentIdentificationNumber).orElseThrow();
+        GradeGroupEntity gradeGroupEntity = this.gradeGroupRepository.findById(gradeGroupId).orElseThrow(() -> new RuntimeException("Grade group not found"));
+        StudentEntity studentEntity = this.repository.findById(studentIdentificationNumber).orElseThrow(() -> new RuntimeException("Student not found"));
         studentEntity.setStudentGradeAssigned(gradeGroupEntity);
         this.repository.save(studentEntity);
     }

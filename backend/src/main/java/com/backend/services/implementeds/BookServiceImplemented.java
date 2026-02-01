@@ -13,8 +13,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-
 
 @Service
 public class BookServiceImplemented implements IBookService {
@@ -31,40 +29,35 @@ public class BookServiceImplemented implements IBookService {
 
     @Override
     @Transactional
-    public void assignOrUnassignedToStudent(AssignBookDto assignBookDto) throws Exception {
-        StudentEntity student = this.studentRepository.findById(assignBookDto.getStudentIdentificationNumber()).orElseThrow();
+    public void assignOrUnassignedToStudent(AssignBookDto assignBookDto) {
+        StudentEntity student = this.studentRepository.findById(assignBookDto.getStudentIdentificationNumber()).orElseThrow(() -> new RuntimeException("Student not found"));
         StudentDto studentDto = this.mapper.convertStudentEntityToStudentDto(student);
-        BookEntity book = this.repository.findById(assignBookDto.getBookId()).orElseThrow();
+        BookEntity book = this.repository.findById(assignBookDto.getBookId()).orElseThrow(() -> new RuntimeException("Book not found"));
         BookDto bookDto = this.mapper.convertBookEntityToBookDto(book);
-        System.out.println(assignBookDto.getIsAssign());
         if(assignBookDto.getIsAssign()) {
-            if (studentDto.getBookId() != null)
-                throw new Exception("The student already has a book: " + student.getBook().getBookName() + ", he has to release it first");
-            if (bookDto.getStudentIdentificationNumber() != null)
-                throw new Exception("Book already assigned: " + bookDto.getStudentIdentificationNumber() + ", it has to release it first");
+            if (studentDto.getBookId() != null) throw new RuntimeException("The student already has a book: " + student.getBook().getBookName() + ", he has to release it first");
+            if (bookDto.getStudentIdentificationNumber() != null) throw new RuntimeException("Book already assigned: " + bookDto.getStudentIdentificationNumber() + ", it has to release it first");
             book.setStudent(student);
             student.setBook(book);
             this.repository.save(book);
             this.studentRepository.save(student);
         } else {
-            if (studentDto.getBookId() == null)
-                throw new Exception("The student does not have a book");
-            if (bookDto.getStudentIdentificationNumber() == null)
-                throw new Exception("Book is not assigned");
+            if (studentDto.getBookId() == null) throw new RuntimeException("The student does not have a book");
+            if (bookDto.getStudentIdentificationNumber() == null) throw new RuntimeException("Book is not assigned");
             book.setStudent(null);
             student.setBook(null);
         }
     }
 
     @Override
-    public void saveBook(BookDto book) throws Exception {
+    public void saveBook(BookDto book) {
         BookEntity bookEntity = this.mapper.convertBookDtoToBookEntity(book);
         this.repository.save(bookEntity);
     }
 
     @Override
     public BookDto findBook(Integer bookId) {
-        return this.mapper.convertBookEntityToBookDto(this.repository.findById(bookId).isPresent() ? this.repository.findById(bookId).get() : null);
+        return this.mapper.convertBookEntityToBookDto(this.repository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found")));
     }
 
     @Override
@@ -73,27 +66,21 @@ public class BookServiceImplemented implements IBookService {
     }
 
     @Override
-    public void updateBook(BookDto book) throws Exception {
-        Optional<BookEntity> bookEntity = this.repository.findById(book.getBookId());
-        if(bookEntity.isPresent()) {
-            BookEntity bookEntityToSave = this.mapper.convertBookDtoToBookEntity(book);
-            if(bookEntity.get().getStudent() == null) this.repository.save(bookEntityToSave);
-            bookEntityToSave.setStudent(bookEntity.get().getStudent());
-            this.repository.save(bookEntityToSave);
-        }
-        else throw new Exception("Book not found");
+    public void updateBook(BookDto book) {
+        BookEntity bookEntity = this.repository.findById(book.getBookId()).orElseThrow(() -> new RuntimeException("Book not found"));
+        BookEntity bookEntityToSave = this.mapper.convertBookDtoToBookEntity(book);
+        if(bookEntity.getStudent() == null) this.repository.save(bookEntityToSave);
+        bookEntityToSave.setStudent(bookEntity.getStudent());
+        this.repository.save(bookEntityToSave);
     }
 
     @Override
     public void deleteBook(Integer bookId) {
-        Optional<BookEntity> bookEntity = this.repository.findById(bookId);
-        if(bookEntity.isPresent()) {
-            StudentEntity studentEntity = this.studentRepository.findById(bookEntity.get().getStudent().getStudentIdentificationNumber()).orElse(null);
-            assert studentEntity != null;
-            studentEntity.setBook(null);
-            this.studentRepository.save(studentEntity);
-            this.repository.deleteById(bookId);
-        }
+        BookEntity bookEntity = this.repository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
+        StudentEntity studentEntity = this.studentRepository.findById(bookEntity.getStudent().getStudentIdentificationNumber()).orElseThrow(() -> new RuntimeException("Student not found"));
+        studentEntity.setBook(null);
+        this.studentRepository.save(studentEntity);
+        this.repository.deleteById(bookId);
         this.repository.deleteById(bookId);
     }
 }

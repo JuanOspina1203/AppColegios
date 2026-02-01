@@ -5,6 +5,7 @@ import com.backend.model.dtos.GradeGroupDto;
 import com.backend.routes.Routes;
 import com.backend.services.IGradeGroupService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ public class GradeGroupController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('DIRECTOR')")
     public ResponseEntity<String> saveGradeGroup(@Validated @RequestBody GradeGroupDto gradeGroupDto) {
         this.service.saveGradeGroup(gradeGroupDto);
         return ResponseEntity.ok("Grade group saved");
@@ -46,24 +48,27 @@ public class GradeGroupController {
         return ResponseEntity.ok(this.service.findAllGradesGroupsByCampus(gradeGroupCampus));
     }
 
-    @GetMapping(Routes.GRADE_GROUP_COUNT_OF_STUDENTS)
+    @GetMapping(Routes.GRADE_GROUP_COUNT_OF_STUDENTS + Routes.GRADE_GROUP_ID)
     public ResponseEntity<Integer> getCountOfStudentsInGradeGroup(@PathVariable String gradeGroupId){
          return ResponseEntity.ok(this.service.getCountOfStudentsInGradeGroup(gradeGroupId));
     }
 
     @PostMapping(Routes.GRADE_GROUP_ASSIGN_TEACHER)
+    @PreAuthorize("hasRole('DIRECTOR')")
     public ResponseEntity<String> assignTeacher(@Validated @RequestBody AssignTeacherDto assignTeacherDto) {
         this.service.assignTeacher(assignTeacherDto.getTeacherIdentificationNumber(), assignTeacherDto.getGradeGroupId());
         return ResponseEntity.ok("Teacher assigned to grade group");
     }
 
     @PutMapping
-    public ResponseEntity<String> updateGradeGroup(@Validated @RequestBody  GradeGroupDto gradeGroupDto) throws Exception {
+    @PreAuthorize("hasRole('DIRECTOR')")
+    public ResponseEntity<String> updateGradeGroup(@Validated @RequestBody  GradeGroupDto gradeGroupDto) {
         this.service.updateGradeGroup(gradeGroupDto);
         return ResponseEntity.ok("Grade group updated");
     }
 
     @DeleteMapping(Routes.GRADE_GROUP_ID)
+    @PreAuthorize("hasRole('DIRECTOR')")
     public ResponseEntity<String> deleteMapping(@PathVariable String gradeGroupId) {
         this.service.deleteGradeGroup(gradeGroupId);
         return ResponseEntity.ok("Grade group deleted");

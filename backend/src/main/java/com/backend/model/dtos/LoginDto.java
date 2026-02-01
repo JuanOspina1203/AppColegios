@@ -1,0 +1,19 @@
+package com.backend.model.dtos;
+
+public class LoginDto {
+
+    private String username;
+    private String password;
+
+    public LoginDto(){}
+
+    public LoginDto(String username, String password) {
+        this.password = password;
+        this.username = username;
+    }
+
+    public String getUsername() {return this.username;}
+    public String getPassword() {return this.password;}
+    public void setUsername(String username) {this.username = username;}
+    public void setPassword(String password) {this.password = password;}
+}
