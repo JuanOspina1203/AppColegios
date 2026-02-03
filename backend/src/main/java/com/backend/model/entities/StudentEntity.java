@@ -14,9 +14,6 @@ public class StudentEntity {
     @Column(name = "student_name")
     private String studentName;
 
-    @Column(name = "student_grade")
-    private String studentGrade;
-
     @Column(name = "student_identification_type")
     private String studentIdentificationType;
 
@@ -31,29 +28,15 @@ public class StudentEntity {
     private GradeGroupEntity studentGradeAssigned;
 
     public StudentEntity() {}
-
     public String getStudentName() {return studentName;}
-
-    public String getStudentGrade() {return studentGrade;}
-
     public String getStudentIdentificationType() {return studentIdentificationType;}
-
     public String getStudentIdentificationNumber() {return studentIdentificationNumber;}
-
     public BookEntity getBook() {return book;}
-
     public void setStudentName(String studentName) {this.studentName = studentName;}
-
-    public void setStudentGrade(String studentGrade) {this.studentGrade = studentGrade;}
-
     public void setStudentIdentificationType(String studentIdentificationType) {this.studentIdentificationType = studentIdentificationType;}
-
     public void setStudentIdentificationNumber(String studentIdentificationNumber) {this.studentIdentificationNumber = studentIdentificationNumber;}
-
     public GradeGroupEntity getStudentGradeAssigned() {return this.studentGradeAssigned;}
-
     public void setStudentGradeAssigned(GradeGroupEntity gradeGroupEntity) {this.studentGradeAssigned = gradeGroupEntity;}
-
     public void setBook(BookEntity book) {
         if (this.book == book) return;
         BookEntity previousBook = this.book;

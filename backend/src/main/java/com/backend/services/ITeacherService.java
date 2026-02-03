@@ -11,4 +11,5 @@ public interface ITeacherService {
     List<String> findAllGradeGroupsAssignedByATeacher(String teacherIdentificationNumber);
     void updateTeacher(TeacherDto teacherDto);
     void deleteTeacher(String teacherIdentificationNumber);
+    void assignDirectorToTeacher(String directorUsername, String teacherIdentificationNumber);
 }

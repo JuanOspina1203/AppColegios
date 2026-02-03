@@ -83,10 +83,10 @@ public class AuthServiceImplemented implements IAuthService {
     public List<TeacherDto> findAllTeachersInChargeByADirector(String directorUsername) {
         return this.teacherRepository.findAll()
                 .stream()
-                .filter(teacher -> teacher
-                        .getTeacherManagedByDirector()
-                        .getDirectorUsername()
-                        .equals(directorUsername))
+                .filter(teacher -> {
+                    if (teacher.getTeacherManagedByDirector() == null) return false;
+                    return directorUsername.equals(teacher.getTeacherManagedByDirector().getDirectorUsername());
+                })
                 .map(this.mapper::convertTeacherEntityToTeacherDto)
                 .toList();
     }

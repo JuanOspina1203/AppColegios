@@ -1,6 +1,6 @@
 package com.backend.controllers;
 
-import com.backend.model.dtos.AssignTeacherDto;
+import com.backend.model.dtos.AssignTeacherToAGradeGroupDto;
 import com.backend.model.dtos.GradeGroupDto;
 import com.backend.routes.Routes;
 import com.backend.services.IGradeGroupService;
@@ -55,8 +55,8 @@ public class GradeGroupController {
 
     @PostMapping(Routes.GRADE_GROUP_ASSIGN_TEACHER)
     @PreAuthorize("hasRole('DIRECTOR')")
-    public ResponseEntity<String> assignTeacher(@Validated @RequestBody AssignTeacherDto assignTeacherDto) {
-        this.service.assignTeacher(assignTeacherDto.getTeacherIdentificationNumber(), assignTeacherDto.getGradeGroupId());
+    public ResponseEntity<String> assignTeacher(@Validated @RequestBody AssignTeacherToAGradeGroupDto assignTeacherToAGradeGroupDto) {
+        this.service.assignTeacher(assignTeacherToAGradeGroupDto.getTeacherIdentificationNumber(), assignTeacherToAGradeGroupDto.getGradeGroupId());
         return ResponseEntity.ok("Teacher assigned to grade group");
     }
 

@@ -2,6 +2,8 @@ package com.backend.model.dtos;
 
 import com.backend.model.Role;
 
+import java.util.List;
+
 public class DirectorDto {
 
     private String directorIdentificationNumber;
@@ -10,6 +12,7 @@ public class DirectorDto {
     private String directorEmail;
     private String directorUsername;
     private String directorPassword;
+    private List<String> teacherIdentificationNumbersInChargeOfDirector;
     private Role role = Role.DIRECTOR;
 
     public DirectorDto(String directorIdentificationNumber,
@@ -17,13 +20,15 @@ public class DirectorDto {
                        String directorName,
                        String directorEmail,
                        String directorUsername,
-                       String directorPassword) {
+                       String directorPassword,
+                       List<String> teacherIdentificationNumbersInChargeOfDirector) {
         this.directorIdentificationNumber = directorIdentificationNumber;
         this.directorIdentificationType = directorIdentificationType;
         this.directorName = directorName;
         this.directorEmail = directorEmail;
         this.directorUsername = directorUsername;
         this.directorPassword = directorPassword;
+        this.teacherIdentificationNumbersInChargeOfDirector = teacherIdentificationNumbersInChargeOfDirector;
     }
 
     public String getDirectorIdentificationNumber() {return directorIdentificationNumber;}
@@ -40,4 +45,6 @@ public class DirectorDto {
     public void setDirectorUsername(String directorUsername) {this.directorUsername = directorUsername;}
     public Role getRole() {return role;}
     public void setRole(Role role) {this.role = role;}
+    public List<String> getTeacherIdentificationNumbersInChargeOfDirector() {return this.teacherIdentificationNumbersInChargeOfDirector;}
+    public void setTeacherIdentificationNumbersInChargeOfDirector(List<String> teacherIdentificationNumbersInChargeOfDirector) {this.teacherIdentificationNumbersInChargeOfDirector = teacherIdentificationNumbersInChargeOfDirector;}
 }

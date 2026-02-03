@@ -26,4 +26,5 @@ public class Routes {
     public static final String AUTH_REGISTER = "/register";
     public static final String AUTH_TEACHERS_IN_CHARGE_OF_A_DIRECTOR = "/teachers";
     public static final String AUTH_FIND_DIRECTOR = "/{directorUsername}";
+    public static final String TEACHERS_ASSIGN_DIRECTOR_TO_A_TEACHER = "/assign-director";
 }

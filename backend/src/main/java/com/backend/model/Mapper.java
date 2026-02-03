@@ -23,7 +23,6 @@ public class Mapper {
         if(studentDto == null) return null;
         StudentEntity studentEntity = new StudentEntity();
         studentEntity.setStudentName(studentDto.getStudentName());
-        studentEntity.setStudentGrade(studentDto.getStudentGrade());
         studentEntity.setStudentIdentificationType(studentDto.getStudentIdentificationType());
         studentEntity.setStudentIdentificationNumber(studentDto.getStudentIdentificationNumber());
         return studentEntity;
@@ -33,7 +32,6 @@ public class Mapper {
         if(studentEntity == null) return null;
         StudentDto studentDto = new StudentDto();
         studentDto.setStudentName(studentEntity.getStudentName());
-        studentDto.setStudentGrade(studentEntity.getStudentGrade());
         studentDto.setStudentIdentificationType(studentEntity.getStudentIdentificationType());
         studentDto.setStudentIdentificationNumber(studentEntity.getStudentIdentificationNumber());
         BookEntity book = studentEntity.getBook();
@@ -101,9 +99,12 @@ public class Mapper {
                     .map(GradeGroupEntity::getGradeGroupId)
                     .toList();
             teacherDto.setTeacherAssignedGroups(groupCodes);
-        } else {
-            teacherDto.setTeacherAssignedGroups(new ArrayList<>());
         }
+        if( teacherEntity.getTeacherManagedByDirector() != null) {
+            teacherDto.setDirectorIdentificationNumber(teacherEntity.getTeacherManagedByDirector().getDirectorIdentificationNumber());
+            teacherDto.setDirectorName(teacherEntity.getTeacherManagedByDirector().getDirectorName());
+        }
+        System.out.println(teacherDto);
         return teacherDto;
     }
 
@@ -129,6 +130,14 @@ public class Mapper {
         gradeGroupDto.setGradeGroupLetter(gradeGroupEntity.getGradeGroupLetter());
         gradeGroupDto.setGradeGroupShift(gradeGroupEntity.getGradeGroupShift());
         gradeGroupDto.setGradeGroupGradeLevel(gradeGroupEntity.getGradeGroupGradeLevel());
+        List<StudentEntity> studentEntities = gradeGroupEntity.getGradeGroupStudents();
+        if(studentEntities != null) {
+           List<String> studentsIdentificationNumbers = studentEntities
+                   .stream()
+                   .map(StudentEntity::getStudentIdentificationNumber)
+                   .toList();
+           gradeGroupDto.setGradeGroupStudentIdsEnrolled(studentsIdentificationNumbers);
+        }
         if(gradeGroupEntity.getGradeGroupTeacherInCharge() != null) {
             gradeGroupDto.setGradeGroupTeacherInChargeName(gradeGroupEntity.getGradeGroupTeacherInCharge().getTeacherName());
             gradeGroupDto.setGradeGroupTeacherInChargeIdentificationNumber(gradeGroupEntity.getGradeGroupTeacherInCharge().getTeacherIdentificationNumber());
@@ -154,13 +163,22 @@ public class Mapper {
 
     public DirectorDto convertDirectorEntityToDirectorDto(DirectorEntity directorEntity) {
         if(directorEntity == null) return null;
+        List<TeacherEntity> teacherEntities = directorEntity.getDirectorManagedTeachers();
+        List<String> teacherIdentificationNumbersInChargeOfADirector = new ArrayList<>();
+        if(teacherEntities != null) {
+            teacherIdentificationNumbersInChargeOfADirector = teacherEntities
+                    .stream()
+                    .map(TeacherEntity::getTeacherIdentificationNumber)
+                    .toList();
+        }
         return new DirectorDto(
                 directorEntity.getDirectorIdentificationNumber(),
                 directorEntity.getDirectorIdentificationType(),
                 directorEntity.getDirectorName(),
                 directorEntity.getDirectorEmail(),
                 directorEntity.getDirectorUsername(),
-                null
+                null,
+                teacherIdentificationNumbersInChargeOfADirector
         );
     }
 }

@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BookServiceImplemented implements IBookService {
@@ -77,10 +78,15 @@ public class BookServiceImplemented implements IBookService {
     @Override
     public void deleteBook(Integer bookId) {
         BookEntity bookEntity = this.repository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
-        StudentEntity studentEntity = this.studentRepository.findById(bookEntity.getStudent().getStudentIdentificationNumber()).orElseThrow(() -> new RuntimeException("Student not found"));
-        studentEntity.setBook(null);
-        this.studentRepository.save(studentEntity);
-        this.repository.deleteById(bookId);
+        if(bookEntity.getStudent() != null) {
+            StudentEntity studentEntity = this.studentRepository
+                    .findById(bookEntity.getStudent().getStudentIdentificationNumber())
+                    .orElse(null);
+            if(studentEntity != null) {
+                studentEntity.setBook(null);
+                this.studentRepository.save(studentEntity);
+            }
+        }
         this.repository.deleteById(bookId);
     }
 }

@@ -2,8 +2,10 @@ package com.backend.services.implementeds;
 
 import com.backend.model.Mapper;
 import com.backend.model.dtos.TeacherDto;
+import com.backend.model.entities.DirectorEntity;
 import com.backend.model.entities.GradeGroupEntity;
 import com.backend.model.entities.TeacherEntity;
+import com.backend.repositories.IDirectorRepository;
 import com.backend.repositories.IGradeGroupRepository;
 import com.backend.repositories.ITeacherRepository;
 import com.backend.services.ITeacherService;
@@ -18,13 +20,16 @@ public class TeacherServiceImplemented implements ITeacherService {
     private final ITeacherRepository repository;
     private final Mapper mapper;
     private final IGradeGroupRepository gradeGroupRepository;
+    private final IDirectorRepository directorRepository;
 
     public TeacherServiceImplemented(ITeacherRepository repository,
                                      Mapper mapper,
-                                     IGradeGroupRepository gradeGroupRepository) {
+                                     IGradeGroupRepository gradeGroupRepository,
+                                     IDirectorRepository directorRepository) {
         this.repository = repository;
         this.mapper = mapper;
         this.gradeGroupRepository = gradeGroupRepository;
+        this.directorRepository = directorRepository;
     }
 
     @Override
@@ -77,5 +82,13 @@ public class TeacherServiceImplemented implements ITeacherService {
             this.repository.deleteById(teacherIdentificationNumber);
         }
         this.repository.deleteById(teacherIdentificationNumber);
+    }
+
+    @Override
+    public void assignDirectorToTeacher(String directorUsername, String teacherIdentificationNumber) {
+        DirectorEntity directorEntity = this.directorRepository.findByDirectorUsername(directorUsername).orElseThrow(() -> new RuntimeException("Director not found"));
+        TeacherEntity teacherEntity = this.repository.findById(teacherIdentificationNumber).orElseThrow(() -> new RuntimeException("Teacher not found"));
+        teacherEntity.setTeacherManagedByDirector(directorEntity);
+        this.repository.save(teacherEntity);
     }
 }

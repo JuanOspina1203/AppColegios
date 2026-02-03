@@ -1,5 +1,6 @@
 package com.backend.controllers;
 
+import com.backend.model.dtos.AssignDirectorToATeacherDto;
 import com.backend.model.dtos.TeacherDto;
 import com.backend.routes.Routes;
 import com.backend.services.ITeacherService;
@@ -54,5 +55,12 @@ public class TeacherController {
     public ResponseEntity<String> deleteTeacher(@PathVariable String teacherIdentificationNumber) {
         this.service.deleteTeacher(teacherIdentificationNumber);
         return ResponseEntity.ok("Teacher deleted");
+    }
+
+    @PostMapping(Routes.TEACHERS_ASSIGN_DIRECTOR_TO_A_TEACHER)
+    @PreAuthorize("hasRole('DIRECTOR')")
+    public ResponseEntity<String> assignDirectorToTeacher(@Validated @RequestBody AssignDirectorToATeacherDto assignDirectorToATeacherDto) {
+        this.service.assignDirectorToTeacher(assignDirectorToATeacherDto.getDirectorUsername(), assignDirectorToATeacherDto.getTeacherIdentificationNumber());
+        return ResponseEntity.ok("Director in charge of teacher");
     }
 }

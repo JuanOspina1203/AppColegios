@@ -69,11 +69,11 @@ public class GradeGroupServiceImplemented implements IGradeGroupService{
 
     @Override
     public Integer getCountOfStudentsInGradeGroup(String gradeGroupId) {
-        return this.studentRepository.findAll()
+        return Math.toIntExact(this.studentRepository.findAll()
                 .stream()
-                .filter(student -> student.getStudentGradeAssigned().getGradeGroupId().equals(gradeGroupId))
-                .toList()
-                .size();
+                .filter(student -> student.getStudentGradeAssigned() != null)
+                .filter(student -> gradeGroupId.equals(student.getStudentGradeAssigned().getGradeGroupId()))
+                .count());
     }
 
     @Override

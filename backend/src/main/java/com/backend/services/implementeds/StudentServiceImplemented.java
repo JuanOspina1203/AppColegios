@@ -69,13 +69,17 @@ public class StudentServiceImplemented implements IStudentService {
 
     @Override
     public void deleteStudent(String studentIdentificationNumber) {
-       StudentEntity studentEntity = this.repository.findById(studentIdentificationNumber).orElseThrow(() -> new RuntimeException("Student not found"));
-       BookEntity bookEntity = studentEntity.getBook() != null ? this.bookRepository.findById(studentEntity.getBook().getBookId()).orElse(null) : null ;
-       if(bookEntity != null) {
-           bookEntity.setStudent(null);
-           this.bookRepository.save(bookEntity);
-       }
-       this.repository.deleteById(studentIdentificationNumber);
+        StudentEntity studentEntity = this.repository.findById(studentIdentificationNumber)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+        if(studentEntity.getBook() != null) {
+            Integer bookId = studentEntity.getBook().getBookId();
+            BookEntity bookEntity = this.bookRepository.findById(bookId).orElse(null);
+            if(bookEntity != null) {
+                bookEntity.setStudent(null);
+                this.bookRepository.save(bookEntity);
+            }
+        }
+        this.repository.deleteById(studentIdentificationNumber);
     }
 
     @Override
